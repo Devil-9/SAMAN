@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:saman/routs.dart';
+import 'package:saman/services/authservice.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -8,7 +9,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool changebutton = false;
-  String name = "";
+  String email = "";
+  String password = "";
 
   final _formkey = GlobalKey<FormState>();
 
@@ -36,12 +38,14 @@ class _LoginPageState extends State<LoginPage> {
             Image.asset(
               "assets/images/mainlogo.png",
               fit: BoxFit.cover,
+              // height: 50.0,
+              // width: 30,0,
             ),
             SizedBox(
               height: 20.0,
             ),
             Text(
-              "Welcome $name",
+              "Welcome $email",
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
@@ -69,10 +73,10 @@ class _LoginPageState extends State<LoginPage> {
                           return "Username Can't be empty";
                         }
 
-                       return null;
+                        return null;
                       },
                       onChanged: (value) {
-                        name = value;
+                        email = value;
                         setState(() {});
                       },
                     ),
@@ -85,53 +89,62 @@ class _LoginPageState extends State<LoginPage> {
                       validator: (value) {
                         if (value!.isEmpty) {
                           return "Password Can't be empty";
-                        }
-                        else if (value.length < 8) {
-                            return "Password Can't be less than 8 digit";
+                        } else if (value.length < 8) {
+                          return "Password Can't be less than 8 digit";
                         }
 
                         return null;
+                      },
+                      onChanged: (value) {
+                        password = value;
+                        setState(() {});
                       },
                     ),
                     SizedBox(
                       height: 40.0,
                     ),
 
-                    Material(
-                      color: Colors.deepPurple,
-                      borderRadius: BorderRadius.circular(changebutton ? 50 : 8),
-                      child: InkWell(
-                        splashColor: Colors.red,
-                        onTap: () => moveToHome(context),
-                        child: AnimatedContainer(
-                          duration: Duration(seconds: 1),
-                          width: changebutton ? 50 : 150,
-                          height: 40,
-                          alignment: Alignment.center,
-                          child: changebutton
-                              ? Icon(
-                                  Icons.done,
-                                  color: Colors.white,
-                                )
-                              : Text(
-                                  "Login",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                        ),
-                      ),
-                    ),
+                    // Material(
+                    //   color: Colors.deepPurple,
+                    //   borderRadius: BorderRadius.circular(changebutton ? 50 : 8),
+                    //   child: InkWell(
+                    //     splashColor: Colors.red,
+                    //     onTap: () => moveToHome(context),
+                    //     child: AnimatedContainer(
+                    //       duration: Duration(seconds: 1),
+                    //       width: changebutton ? 50 : 150,
+                    //       height: 40,
+                    //       alignment: Alignment.center,
+                    //       child: changebutton
+                    //           ? Icon(
+                    //               Icons.done,
+                    //               color: Colors.white,
+                    //             )
+                    //           : Text(
+                    //               "Login",
+                    //               style: TextStyle(
+                    //                 color: Colors.white,
+                    //                 fontWeight: FontWeight.bold,
+                    //                 fontSize: 18,
+                    //               ),
+                    //             ),
+                    //     ),
+                    //   ),
+                    // ),
 
-                    // ElevatedButton(
-                    //   onPressed: () {
-                    //     Navigator.pushNamed(context, MyRoutes.homeRoute);
-                    //   },
-                    //   child: Text("Login"),
-                    //   style: TextButton.styleFrom(minimumSize: Size(150, 40)),
-                    // )
+                    ElevatedButton(
+                      onPressed: () {
+                        AuthService().login(email, password).then((val) {
+                          if (val.data['success']) {
+                            Navigator.pushNamed(context, MyRoutes.homeRoute);
+                          } else {
+                            print("err");
+                          }
+                        });
+                      },
+                      child: Text("Login"),
+                      style: TextButton.styleFrom(minimumSize: Size(150, 40)),
+                    )
                   ],
                 ),
               ),
